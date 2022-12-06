@@ -6,4 +6,5 @@ This year, I'll be trying out [OCaml](https://ocaml.org/). I am using version *4
 This comes with minor annoyances:
   - No standard `string -> char list` conversion, nor the other way around.
   - No access to the `Seq` module, which would provide various useful iteration tools.
+
 All of those are not primordial and ultimately I chose simplicity in not changing my already exisant setup.
