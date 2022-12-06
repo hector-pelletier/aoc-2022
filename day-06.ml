@@ -3,27 +3,14 @@
 (* Input Parsing *)
 let parse_input filename =
 	let ic = open_in filename in
-	let rec s_to_list n l s =
-		if n < 0 then l else s_to_list (n-1) (s.[n]::l) s in
 	let line = input_line ic in
-	close_in ic; s_to_list (String.length line - 1) [] line;;
+	close_in ic; line;;
 
 (* Commons *)
-let find_start size l =
-	let rec all_diff l =
-		match l with
-		| h::tl -> if List.exists (fun x -> x = h) tl then false else all_diff tl
-		| [] -> true in
-	let rec rfind n l cbuf =
-		match l with
-		| h::tl -> 
-			let ncbuf = (if n > size then List.tl cbuf else cbuf) @ [h] in 
-			if n >= size && (all_diff ncbuf)
-			then n
-			else rfind (n+1) tl ncbuf
-		| _ -> 0 in
-	rfind 1 l [];;
-	
+let find_start size packet =
+	let rec all_diff s n = if n < 0 then true else (if String.contains_from s (n+1) s.[n] then false else all_diff s (n-1)) in
+	let rec rfind a = if all_diff (String.sub packet a size) (size-2) then a else rfind (a+1) in
+	size + rfind 0;;  
 
 (* Silver *)
 let silver input = find_start 4 input;;
