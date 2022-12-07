@@ -14,27 +14,22 @@ let parse_input filename =
 	
 	let fs = Dir (None, Hashtbl.create 100) in
 	
-	let rec fill l cd = 
-		let Dir(_, down) = cd in
-		match l with
-		| [] | ("$", _, _)::_ -> l
-		| ("dir", n, _)::tl -> 
-			Hashtbl.add down n (Dir(Some cd, Hashtbl.create 100)); 
-			fill tl cd
-		| (i, n, _)::tl -> 
-			Hashtbl.add down n (File(int_of_string i)); 
-			fill tl cd in
-	
 	let rec parse ins cd =
 		match ins with
 		| [] -> fs
 		| h::tl -> let Dir(up, down) = cd in 
 			match h with 
-			| ("$", "cd", "/") -> parse tl fs
+			| ("$", "cd", "/")  -> parse tl fs
 			| ("$", "cd", "..") -> let Some d = up in parse tl d
-			| ("$", "cd", s) -> parse tl (Hashtbl.find down s)
-			| ("$", "ls", _) -> parse (fill tl cd) cd in
-	
+			| ("$", "cd", s) 	-> parse tl (Hashtbl.find down s)
+			| ("$", "ls", _) 	-> parse tl cd
+			| ("dir", n, _) 	-> 
+				Hashtbl.add down n (Dir(Some cd, Hashtbl.create 100)); 
+				parse tl cd
+			| (i, n, _) 		-> 
+				Hashtbl.add down n (File(int_of_string i)); 
+				parse tl cd in
+				
 	parse (read_lines ()) fs;;
 	
 (* Tree walk *)
